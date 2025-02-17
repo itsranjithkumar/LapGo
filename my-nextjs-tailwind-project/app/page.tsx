@@ -21,7 +21,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, animate, useInView, useAnimation } from "framer-motion"
+import Image from 'next/image';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -36,6 +37,26 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // Add state for background image
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const backgroundImages = [
+    '/lap1.jpg',
+    '/lap.jpg',
+    '/lap2.jpg',
+    '/lap3.jpg'
+  ];
+
+  // Add useEffect to cycle through background images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBackgroundIndex((prevIndex) => 
+        (prevIndex + 1) % backgroundImages.length
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -58,7 +79,7 @@ export default function Home() {
               <Link className="transition-colors hover:text-foreground/80" href="#services">
                 Services
               </Link>
-              <Link className="transition-colors hover:text-foreground/80" href="#market">
+              <Link className="transition-colors hover:text-foreground/80" href="#market-demand">
                 Market Analysis
               </Link>
               <Link className="transition-colors hover:text-foreground/80" href="#pricing">
@@ -77,24 +98,17 @@ export default function Home() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="absolute w-full h-full object-cover"
-          >
-            <source src="/laptop.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <motion.div 
-          className="absolute inset-0 bg-black/50 z-10" 
-          style={{ y }}
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-in-out"
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImages[backgroundIndex]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
+          <div className="absolute inset-0 bg-black/50 z-10" />
           <div className="absolute inset-0 bg-grid-white/[0.02]" />
-        </motion.div>
+        </div>
         <div className="container relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -122,8 +136,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Market Analysis */}
-      <section id="market" className="py-32 bg-gradient-to-b from-background to-secondary/20">
+      {/* Market Demand */}
+      <section id="market-demand" className="py-32">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -132,41 +146,115 @@ export default function Home() {
             viewport={{ once: true }}
             className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Market Analysis</h2>
-            <p className="text-muted-foreground text-lg">
-              The laptop rental and leasing market is projected to reach US$5.5 billion by 2032
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Market Demand Insights</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Understanding the evolving needs of IT students and professionals
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <Image 
+                src="/tech.jpg" 
+                alt="Market Demand and Technology Trends" 
+                width={500} 
+                height={400} 
+                className="rounded-xl shadow-lg object-cover"
+              />
+            </motion.div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
+              {[
+                {
+                  icon: Users,
+                  title: "Growing Demand",
+                  description: "The demand for affordable, high-performance laptops among IT students in India is significant. Many students face financial constraints that make purchasing new laptops challenging.",
+                },
+                {
+                  icon: LineChart,
+                  title: "Technology Evolution",
+                  description: "The rapid evolution of technology necessitates frequent upgrades, further burdening students financially. Our rental services provide a cost-effective solution.",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: "Access to Latest Tech",
+                  description: "By offering rental services, we ensure students have access to the latest technology without the hefty investment, addressing their immediate academic and professional needs.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="group hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                      <item.icon className="h-10 w-10 mb-5 transition-transform group-hover:scale-110" />
+                      <h3 className="text-tech-card-title font-bold mb-3">{item.title}</h3>
+                      <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Strategy */}
+      <section id="pricing" className="py-32 bg-gradient-to-b from-background to-secondary/20">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
+          >
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Pricing Strategy</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Flexible and affordable rental solutions tailored to your needs
             </p>
           </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {[
               {
-                icon: Users,
-                title: "Growing Demand",
-                description: "The demand for affordable, high-performance laptops among IT students in India is significant. Many students face financial constraints that make purchasing new laptops challenging.",
+                icon: WalletCards,
+                title: "Tiered Pricing Model",
+                description: "Rental prices determined by laptop specifications, duration, and selected allied services to ensure affordability and profitability.",
               },
               {
-                icon: LineChart,
-                title: "Technology Evolution",
-                description: "The rapid evolution of technology necessitates frequent upgrades, further burdening students financially. Our rental services provide a cost-effective solution.",
+                icon: Laptop,
+                title: "Model-Based Pricing",
+                description: "Basic models start at ₹1,500 per month, with higher-end machines priced accordingly to reflect their advanced capabilities.",
               },
               {
-                icon: ShieldCheck,
-                title: "Access to Latest Tech",
-                description: "By offering rental services, we ensure students have access to the latest technology without the hefty investment, addressing their immediate academic and professional needs.",
+                icon: Settings,
+                title: "Customizable Packages",
+                description: "Flexible add-ons for allied services and insurance, allowing customers to personalize their rental experience.",
               },
             ].map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-                  <CardContent className="mt-4 grid gap-4 p-6">
-                    <item.icon className="h-8 w-8 transition-transform group-hover:scale-110" />
-                    <h3 className="text-xl font-bold">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                <Card className="group hover:shadow-lg transition-all duration-300">
+                  <CardContent className="p-6">
+                    <item.icon className="h-10 w-10 mb-5 transition-transform group-hover:scale-110" />
+                    <h3 className="text-tech-card-title font-bold mb-3">{item.title}</h3>
+                    <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                      {item.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -185,8 +273,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Comprehensive Services</h2>
-            <p className="text-muted-foreground text-lg">Everything you need for your academic success</p>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Comprehensive Services</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Everything you need for your academic success
+            </p>
           </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {[
@@ -230,9 +320,11 @@ export default function Home() {
               >
                 <Card className="group hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-6">
-                    <item.icon className="h-8 w-8 mb-4 transition-transform group-hover:scale-110" />
-                    <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                    <item.icon className="h-10 w-10 mb-5 transition-transform group-hover:scale-110" />
+                    <h3 className="text-tech-card-title font-bold mb-3">{item.title}</h3>
+                    <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                      {item.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -241,8 +333,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Financial Projections */}
-      <section className="py-32 bg-gradient-to-b from-secondary/20 to-background">
+      {/* Financial Overview */}
+      <section id="financials" className="py-32">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -251,29 +343,75 @@ export default function Home() {
             viewport={{ once: true }}
             className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Financial Overview</h2>
-            <p className="text-muted-foreground text-lg">Sustainable business model with strong growth potential</p>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Financial Overview</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Sustainable business model with strong growth potential
+            </p>
           </motion.div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: "Monthly Revenue", value: "₹10,00,000" },
-              { title: "Average Rentals", value: "500+" },
-              { title: "Monthly EBITDA", value: "₹3,50,000" },
-              { title: "Annual EBITDA", value: "₹42,00,000" },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="text-center p-6">
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">{stat.title}</h3>
-                  <p className="text-3xl font-bold">{stat.value}</p>
-                </Card>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-center">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
+              {[
+                { title: "Monthly Revenue", value: 1000000, prefix: "₹", suffix: "" },
+                { title: "Average Rentals", value: 500, prefix: "", suffix: "+" },
+                { title: "Monthly EBITDA", value: 350000, prefix: "₹", suffix: "" },
+                { title: "Annual EBITDA", value: 4200000, prefix: "₹", suffix: "" },
+              ].map((stat, index) => {
+                const [count, setCount] = useState(0);
+                const ref = useRef(null);
+                const inView = useInView(ref, { once: true });
+                const controls = useAnimation();
+
+                useEffect(() => {
+                  if (inView) {
+                    const duration = 2; // Animation duration in seconds
+                    const startCount = 0;
+                    const endCount = stat.value;
+
+                    const animation = animate(startCount, endCount, {
+                      duration: duration,
+                      onUpdate: (latest) => {
+                        setCount(Math.round(latest));
+                      },
+                    });
+
+                    return () => animation.stop();
+                  }
+                }, [inView, stat.value]);
+
+                return (
+                  <motion.div
+                    ref={ref}
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="text-center p-6">
+                      <h3 className="text-lg font-medium text-muted-foreground mb-2">{stat.title}</h3>
+                      <p className="text-3xl font-bold">
+                        {stat.prefix}{count.toLocaleString()}{stat.suffix}
+                      </p>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <Image 
+                src="/financial.jpg" 
+                alt="Financial Analysis and Marketing Insights" 
+                width={500} 
+                height={400} 
+                className="rounded-xl shadow-lg object-cover"
+              />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -288,43 +426,64 @@ export default function Home() {
             viewport={{ once: true }}
             className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Advanced Security</h2>
-            <p className="text-muted-foreground text-lg">Multi-layered protection for your peace of mind</p>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Advanced Security</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Multi-layered protection for your peace of mind
+            </p>
           </motion.div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {[
-              {
-                icon: MapPin,
-                title: "GPS Tracking",
-                description: "Real-time location monitoring with ESP32-based module and dedicated battery",
-              },
-              {
-                icon: Shield,
-                title: "KYC Verification",
-                description: "Mandatory Aadhaar and College ID verification with legal agreement",
-              },
-              {
-                icon: BookOpen,
-                title: "Insurance Coverage",
-                description: "Optional theft liability insurance for additional protection",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-              >
-                <Card className="group hover:shadow-lg transition-all duration-300">
-                  <CardContent className="p-6">
-                    <feature.icon className="h-12 w-12 mb-4 text-primary transition-transform group-hover:scale-110" />
-                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <Image 
+                src="/security.jpg" 
+                alt="Advanced Security Protection" 
+                width={500} 
+                height={400} 
+                className="rounded-xl shadow-lg object-cover"
+              />
+            </motion.div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
+              {[
+                {
+                  icon: ShieldCheck,
+                  title: "Data Encryption",
+                  description: "End-to-end encryption to protect your sensitive information"
+                },
+                {
+                  icon: Users,
+                  title: "Access Control",
+                  description: "Granular user permissions and multi-factor authentication"
+                },
+                {
+                  icon: Cpu,
+                  title: "AI-Powered Threat Detection",
+                  description: "Real-time monitoring and intelligent threat prevention"
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="group hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                      <item.icon className="h-10 w-10 mb-5 transition-transform group-hover:scale-110" />
+                      <h3 className="text-tech-card-title font-bold mb-3">{item.title}</h3>
+                      <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -340,8 +499,8 @@ export default function Home() {
             className="grid gap-16 md:grid-cols-2"
           >
             <div>
-              <h2 className="text-3xl font-bold tracking-tight">Start Your Journey</h2>
-              <p className="mt-4 text-lg text-muted-foreground">
+              <h2 className="text-tech-title">Start Your Journey</h2>
+              <p className="mt-4 text-tech-body text-muted-foreground">
                 Ready to elevate your tech education? Get in touch with our team today.
               </p>
               <div className="mt-8 grid gap-4">
@@ -379,13 +538,13 @@ export default function Home() {
               <Laptop className="h-6 w-6" />
               <span className="font-bold">TechRent</span>
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-4 text-tech-body text-muted-foreground">
               Empowering IT students with affordable access to technology and comprehensive support services.
             </p>
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Services</h3>
-            <ul className="grid gap-2 text-sm text-muted-foreground">
+            <h3 className="mb-4 text-tech-body font-semibold">Services</h3>
+            <ul className="grid gap-2 text-tech-body text-muted-foreground">
               <li>Laptop Rental</li>
               <li>Technical Support</li>
               <li>Development Assistance</li>
@@ -393,8 +552,8 @@ export default function Home() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Company</h3>
-            <ul className="grid gap-2 text-sm text-muted-foreground">
+            <h3 className="mb-4 text-tech-body font-semibold">Company</h3>
+            <ul className="grid gap-2 text-tech-body text-muted-foreground">
               <li>About</li>
               <li>Careers</li>
               <li>Blog</li>
@@ -402,8 +561,8 @@ export default function Home() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Legal</h3>
-            <ul className="grid gap-2 text-sm text-muted-foreground">
+            <h3 className="mb-4 text-tech-body font-semibold">Legal</h3>
+            <ul className="grid gap-2 text-tech-body text-muted-foreground">
               <li>Terms</li>
               <li>Privacy</li>
               <li>Cookies</li>
