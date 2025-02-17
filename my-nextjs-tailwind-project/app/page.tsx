@@ -7,28 +7,23 @@ import {
   Shield,
   Phone,
   Code,
-  MapPin,
   PenToolIcon as Tool,
   Cpu,
   Headphones,
   Settings,
   LineChart,
   Users,
-  School,
-  BookOpen,
   WalletCards,
   ShieldCheck,
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { motion, useScroll, useTransform, animate, useInView, useAnimation } from "framer-motion"
+import { motion,   animate, useInView, } from "framer-motion"
 import Image from 'next/image';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
   const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll()
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,7 +51,48 @@ export default function Home() {
     }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [backgroundImages.length]); // Added dependency
+
+  // Refactor financial overview section to use a separate component for count animation
+  const AnimatedCount = ({ stat }: { stat: { title: string; value: number; prefix: string; suffix: string } }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: true });
+
+    useEffect(() => {
+      if (inView) {
+        const duration = 2; // Animation duration in seconds
+        const startCount = 0;
+        const endCount = stat.value;
+
+        const animation = animate(startCount, endCount, {
+          duration: duration,
+          onUpdate: (latest) => {
+            setCount(Math.round(latest));
+          },
+        });
+
+        return () => animation.stop();
+      }
+    }, [inView, stat.value]);
+
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+      >
+        <Card className="text-center p-6">
+          <h3 className="text-lg font-medium text-muted-foreground mb-2">{stat.title}</h3>
+          <p className="text-3xl font-bold">
+            {stat.prefix}{count.toLocaleString()}{stat.suffix}
+          </p>
+        </Card>
+      </motion.div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -355,47 +391,9 @@ export default function Home() {
                 { title: "Average Rentals", value: 500, prefix: "", suffix: "+" },
                 { title: "Monthly EBITDA", value: 350000, prefix: "₹", suffix: "" },
                 { title: "Annual EBITDA", value: 4200000, prefix: "₹", suffix: "" },
-              ].map((stat, index) => {
-                const [count, setCount] = useState(0);
-                const ref = useRef(null);
-                const inView = useInView(ref, { once: true });
-                const controls = useAnimation();
-
-                useEffect(() => {
-                  if (inView) {
-                    const duration = 2; // Animation duration in seconds
-                    const startCount = 0;
-                    const endCount = stat.value;
-
-                    const animation = animate(startCount, endCount, {
-                      duration: duration,
-                      onUpdate: (latest) => {
-                        setCount(Math.round(latest));
-                      },
-                    });
-
-                    return () => animation.stop();
-                  }
-                }, [inView, stat.value]);
-
-                return (
-                  <motion.div
-                    ref={ref}
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    <Card className="text-center p-6">
-                      <h3 className="text-lg font-medium text-muted-foreground mb-2">{stat.title}</h3>
-                      <p className="text-3xl font-bold">
-                        {stat.prefix}{count.toLocaleString()}{stat.suffix}
-                      </p>
-                    </Card>
-                  </motion.div>
-                );
-              })}
+              ].map((stat, index) => (
+                <AnimatedCount key={index} stat={stat} />
+              ))}
             </div>
             <motion.div
               initial={{ opacity: 0, x: 50 }}
@@ -491,6 +489,18 @@ export default function Home() {
       {/* Contact */}
       <section id="contact" className="border-t">
         <div className="container py-24 sm:py-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
+          >
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Contact Us</h2>
+            <p className="text-tech-body text-muted-foreground max-w-[700px] text-center">
+              We&apos;re here to support your technological journey. Reach out to us for any inquiries, support, or collaboration opportunities.
+            </p>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
