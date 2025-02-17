@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { motion,   animate, useInView, } from "framer-motion"
+import { motion, animate, useInView, AnimatePresence } from "framer-motion"
 import Image from 'next/image';
 
 export default function Home() {
@@ -134,17 +134,27 @@ export default function Home() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-in-out"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImages[backgroundIndex]})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-black/50 z-10" />
-          <div className="absolute inset-0 bg-grid-white/[0.02]" />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={backgroundIndex}
+            animate={{
+              scale: [1, 1.1],
+              backgroundPosition: ['center center', 'center center', 'left top', 'right bottom']
+            }}
+            transition={{
+              duration: 5,
+              ease: "easeInOut"
+            }}
+            className="absolute inset-0 z-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImages[backgroundIndex]})`,
+              backgroundSize: 'cover',
+            }}
+          >
+            <div className="absolute inset-0 bg-black/50 z-10" />
+            <div className="absolute inset-0 bg-grid-white/[0.02]" />
+          </motion.div>
+        </AnimatePresence>
         <div className="container relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -164,7 +174,7 @@ export default function Home() {
               <Button size="lg" className="h-12 px-8 text-lg">
                 Get Started
               </Button>
-              <Button size="lg" variant="outline" className="h-12 px-8 text-lg text-black bg-white/30 border-white/50 border-2 hover:bg-white hover:text-black transition-colors duration-300 font-bold tracking-wider shadow-lg hover:shadow-xl">
+              <Button size="lg" variant="outline" className="h-12 px-8 text-lg text-black bg-white border-white/50 border-2 hover:bg-white/90 hover:text-black transition-colors duration-300 font-bold tracking-wider shadow-lg hover:shadow-xl">
                 Learn More
               </Button>
             </div>
