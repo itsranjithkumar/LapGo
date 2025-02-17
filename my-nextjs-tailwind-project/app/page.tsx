@@ -80,15 +80,22 @@ export default function Home() {
       <motion.div
         ref={ref}
         initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          duration: 0.5,
+          delay: 0 // Ensure it stays visible after animation
+        }}
         viewport={{ once: true }}
       >
-        <Card className="text-center p-6">
-          <h3 className="text-lg font-medium text-muted-foreground mb-2">{stat.title}</h3>
-          <p className="text-3xl font-bold">
-            {stat.prefix}{count.toLocaleString()}{stat.suffix}
-          </p>
+        <Card className="hover:shadow-xl transition-all duration-300 group">
+          <CardContent className="p-6 text-center">
+            <h3 className="text-lg font-medium text-muted-foreground mb-2 group-hover:text-primary transition-colors">
+              {stat.title}
+            </h3>
+            <p className="text-4xl font-extrabold text-primary group-hover:text-blue-600 transition-colors">
+              {stat.prefix}{count.toLocaleString()}{stat.suffix}
+            </p>
+          </CardContent>
         </Card>
       </motion.div>
     );
@@ -379,6 +386,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Customer Acquisition and Onboarding */}
+      <section id="acquisition" className="py-32 bg-gray-50">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mx-auto mb-16 flex max-w-[58rem] flex-col items-center space-y-4 text-center"
+          >
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Customer Acquisition Strategy</h2>
+            <p className="text-tech-body text-muted-foreground">
+              Building trust and expanding our reach
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex flex-col justify-center space-y-6 md:col-span-2"
+            >
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                  viewport={{ once: true }}
+                  className="flex justify-center"
+                >
+                  <Card className="hover:shadow-lg transition-all duration-300 w-full">
+                    <CardContent className="p-6">
+                      <Users className="h-10 w-10 mb-5 text-primary" />
+                      <h3 className="text-tech-card-title font-bold mb-3">Collaboration with Placement Cells</h3>
+                      <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                        Partnering with college placement cells to introduce the service to students, offering special packages and demonstrations.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                  viewport={{ once: true }}
+                  className="flex justify-center"
+                >
+                  <Card className="hover:shadow-lg transition-all duration-300 w-full">
+                    <CardContent className="p-6">
+                      <ShieldCheck className="h-10 w-10 mb-5 text-primary" />
+                      <h3 className="text-tech-card-title font-bold mb-3">Parental Engagement</h3>
+                      <p className="text-tech-card-description text-muted-foreground leading-relaxed">
+                        Conducting webinars and informational sessions for parents to highlight the benefits and safety measures of the service, addressing concerns about device security and financial liability.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Financial Overview */}
       <section id="financials" className="py-32">
         <div className="container">
@@ -396,30 +467,84 @@ export default function Home() {
           </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-center">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
-              {[
-                { title: "Monthly Revenue", value: 1000000, prefix: "₹", suffix: "" },
-                { title: "Average Rentals", value: 500, prefix: "", suffix: "+" },
-                { title: "Monthly EBITDA", value: 350000, prefix: "₹", suffix: "" },
-                { title: "Annual EBITDA", value: 4200000, prefix: "₹", suffix: "" },
-              ].map((stat, index) => (
-                <AnimatedCount key={index} stat={stat} />
-              ))}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="flex justify-center"
+              >
+                <Image 
+                  src="/financial.jpg" 
+                  alt="Financial Analysis and Marketing Insights" 
+                  width={500} 
+                  height={400} 
+                  className="rounded-xl shadow-lg object-cover w-full h-auto"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="flex justify-center"
+              >
+                <Card className="p-6 w-full">
+                  <h3 className="text-lg font-semibold mb-4">Financial Breakdown</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Monthly Revenue</span>
+                      <span className="font-bold">₹10,00,000</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Operational Costs</span>
+                      <span className="font-bold">₹3,00,000</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Personnel Salaries</span>
+                      <span className="font-bold">₹2,00,000</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Maintenance and Support</span>
+                      <span className="font-bold">₹1,00,000</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Insurance and Miscellaneous</span>
+                      <span className="font-bold">₹50,000</span>
+                    </div>
+                    <div className="border-t pt-3 flex justify-between">
+                      <span className="font-bold text-primary">Monthly EBITDA</span>
+                      <span className="font-bold text-primary">₹3,50,000</span>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
             </div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="flex justify-center"
-            >
-              <Image 
-                src="/financial.jpg" 
-                alt="Financial Analysis and Marketing Insights" 
-                width={500} 
-                height={400} 
-                className="rounded-xl shadow-lg object-cover"
-              />
-            </motion.div>
+            <div className="grid grid-cols-1 gap-8">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
+                {[
+                  { title: "Monthly Revenue", value: 1000000, prefix: "₹", suffix: "" },
+                  { title: "Average Monthly Rentals", value: 500, prefix: "", suffix: "+" },
+                  { title: "Monthly EBITDA", value: 350000, prefix: "₹", suffix: "" },
+                  { title: "Annual EBITDA", value: 4200000, prefix: "₹", suffix: "" },
+                ].map((stat, index) => (
+                  <AnimatedCount key={index} stat={stat} />
+                ))}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="p-6 bg-blue-50">
+                    <h3 className="text-lg font-semibold mb-4 text-blue-800">Market Projection</h3>
+                    <p className="text-muted-foreground">
+                      The laptop rental and leasing market is projected to reach US$5.5 billion by 2032, with a significant portion attributed to the education sector.
+                    </p>
+                  </Card>
+                </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
